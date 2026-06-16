@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Evaluation Factory — Lab 14 Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">⚙️ AI Evaluation <span>Factory</span></div>
+      <div class="tagline">Lab 14 — Multi-Judge Benchmark Dashboard (Gemini)</div>
+    </div>
+    <div class="status-pills" id="status-pills"></div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-view="overview" class="active">🔭 Tổng quan</button>
+    <button data-view="demo">⚡ Live Demo</button>
+    <button data-view="results">📊 Kết quả Benchmark</button>
+    <button data-view="regression">🔀 Regression & Gate</button>
+    <button data-view="cases">🧪 Test Cases</button>
+  </nav>
+
+  <main>
+    <!-- ============ OVERVIEW ============ -->
+    <section class="view active" id="view-overview">
+      <h2 class="section">Pipeline đánh giá</h2>
+      <p class="section-sub">Mỗi câu hỏi đi qua 4 tầng. Hệ thống tách bạch chất lượng Retrieval và Generation để biết chính xác lỗi nằm ở đâu.</p>
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="pipeline">
+          <div class="stage"><div class="num">TẦNG 1</div><div class="title">🔎 Retrieval</div><div class="desc">TF-IDF trên corpus → Hit Rate, MRR</div></div>
+          <div class="arrow">→</div>
+          <div class="stage"><div class="num">TẦNG 2</div><div class="title">✍️ Generation</div><div class="desc">Gemini sinh câu trả lời grounded</div></div>
+          <div class="arrow">→</div>
+          <div class="stage"><div class="num">TẦNG 3</div><div class="title">📐 RAGAS</div><div class="desc">Faithfulness, Answer Relevancy</div></div>
+          <div class="arrow">→</div>
+          <div class="stage"><div class="num">TẦNG 4</div><div class="title">⚖️ Multi-Judge</div><div class="desc">2 model → debate → arbiter → consensus</div></div>
+        </div>
+      </div>
+      <div class="grid cards" id="overview-cards"></div>
+      <div class="panel" style="margin-top:18px;">
+        <h3 style="margin-top:0;">Cơ chế xử lý xung đột giám khảo (escalation ladder)</h3>
+        <div class="pipeline">
+          <div class="stage done"><div class="title">① Độc lập</div><div class="desc">2 judge chấm song song. Lệch ≤1 → trung bình.</div></div>
+          <div class="arrow">→</div>
+          <div class="stage lit"><div class="title">② Tranh luận</div><div class="desc">Đọc lý do của nhau, chấm lại. Hội tụ → dừng.</div></div>
+          <div class="arrow">→</div>
+          <div class="stage"><div class="title">③ Trọng tài</div><div class="desc">Vẫn lệch → gemini-2.5-pro phân xử (median).</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LIVE DEMO ============ -->
+    <section class="view" id="view-demo">
+      <h2 class="section">Live Demo — chạy thật qua pipeline</h2>
+      <p class="section-sub">Gõ câu hỏi (hoặc chọn mẫu) và xem từng tầng hoạt động với Gemini thật.</p>
+      <div class="panel">
+        <div class="demo-input">
+          <input type="text" id="q-input" placeholder="VD: Một năm tôi có bao nhiêu ngày phép?" />
+          <select id="version-select">
+            <option value="V2_Optimized">V2 Optimized</option>
+            <option value="V1_Base">V1 Base</option>
+          </select>
+          <button class="btn primary" id="run-btn">▶ Đánh giá</button>
+        </div>
+        <div class="samples" id="samples"></div>
+      </div>
+
+      <div id="demo-result" style="margin-top:18px;"></div>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section class="view" id="view-results">
+      <h2 class="section">Kết quả Benchmark (V2 Optimized)</h2>
+      <p class="section-sub" id="results-sub">Đang tải…</p>
+      <div class="grid cards" id="result-cards"></div>
+      <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:18px;" id="result-charts"></div>
+    </section>
+
+    <!-- ============ REGRESSION ============ -->
+    <section class="view" id="view-regression">
+      <h2 class="section">Regression V1 → V2 & Release Gate</h2>
+      <p class="section-sub">So sánh phiên bản và quyết định phát hành tự động theo Chất lượng / Chi phí / Hiệu năng.</p>
+      <div id="gate-box"></div>
+      <div class="grid" style="grid-template-columns:1.2fr 1fr; margin-top:18px;">
+        <div class="panel"><h3 style="margin-top:0;">So sánh chỉ số</h3><div class="bars" id="regression-bars"></div></div>
+        <div class="panel"><h3 style="margin-top:0;">Tiêu chí cổng phát hành</h3><div id="gate-checks"></div></div>
+      </div>
+    </section>
+
+    <!-- ============ CASES ============ -->
+    <section class="view" id="view-cases">
+      <h2 class="section">Chi tiết Test Cases</h2>
+      <p class="section-sub">Lọc theo trạng thái / loại. Bấm dòng để xem chi tiết chấm điểm.</p>
+      <div class="filters" id="case-filters"></div>
+      <div class="panel" style="padding:0; overflow:auto; max-height:70vh;">
+        <table id="cases-table">
+          <thead><tr>
+            <th data-sort="id">ID</th><th data-sort="question">Câu hỏi</th>
+            <th data-sort="type">Loại</th><th data-sort="hit">Hit</th>
+            <th data-sort="mrr">MRR</th><th data-sort="faith">Faith</th>
+            <th data-sort="score">Judge</th><th data-sort="status">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal-root"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

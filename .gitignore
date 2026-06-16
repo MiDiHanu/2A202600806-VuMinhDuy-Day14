@@ -2,5 +2,7 @@
 __pycache__/
 *.pyc
 .DS_Store
-reports/
-data/golden_set.jsonl
+.venv/
+ev_test.json
+
+# Lưu ý: reports/ và data/golden_set.jsonl ĐƯỢC commit (deliverable nộp bài + reproducibility).

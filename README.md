@@ -56,19 +56,42 @@ Báo cáo 5 Whys phải chỉ ra được lỗi nằm ở đâu: Ingestion pipel
 
 ## 🔧 Hướng dẫn chạy
 
+Hệ thống dùng **Google Gemini** qua endpoint OpenAI-compatible. Mọi module có
+fallback **offline mock** nên vẫn chạy được khi chưa có API key (để kiểm thử định dạng).
+
 ```bash
-# 1. Cài đặt dependencies
-pip install -r requirements.txt
+# 0. Cài deps (khuyến nghị uv) và tạo .env
+uv sync                  # hoặc: pip install -r requirements.txt
+cp .env.example .env     # rồi điền GEMINI_API_KEY=...
 
-# 2. Tạo Golden Dataset (chạy trước khi benchmark)
-python data/synthetic_gen.py
+# 1. Tạo Golden Dataset (60 cases) + corpus (chạy trước khi benchmark)
+python data/synthetic_gen.py            # thêm --augment để Gemini sinh thêm case
 
-# 3. Chạy Benchmark & tạo reports
+# 2. Chạy Benchmark V1/V2 + Regression + Release Gate -> reports/
 python main.py
+
+# 3. Sinh báo cáo phân tích thất bại từ dữ liệu thật
+python analysis/generate_analysis.py    # thêm --llm để Gemini viết 5-Whys sâu hơn
+python analysis/make_reflections.py "Tên SV 1" "Tên SV 2"   # tạo reflection cá nhân
 
 # 4. Kiểm tra định dạng trước khi nộp
 python check_lab.py
 ```
+
+### 🖥️ Dashboard demo (trực quan hóa pipeline)
+```bash
+python frontend/server.py     # mở http://localhost:8000
+```
+Gồm 5 tab: **Tổng quan · Live Demo · Kết quả Benchmark · Regression & Gate · Test Cases**.
+Tab *Live Demo* chạy thật 1 câu hỏi qua 4 tầng (Retrieval → Generation → RAGAS → Multi-Judge).
+
+### ⚙️ Biến môi trường tùy chọn
+| Biến | Mặc định | Ý nghĩa |
+|---|---|---|
+| `GEMINI_API_KEY` | – | Bắt buộc để chạy ONLINE |
+| `JUDGE_MODEL_A` / `JUDGE_MODEL_B` | `gemini-2.5-flash` / `gemini-2.5-flash-lite` | 2 model giám khảo |
+| `ARBITER_MODEL` | `gemini-2.5-pro` | Trọng tài khi xung đột |
+| `BENCH_CONCURRENCY` | `4` | Số case chạy song song (giảm nếu bị rate-limit) |
 
 ---
 

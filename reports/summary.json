@@ -1,0 +1,163 @@
+{
+  "metadata": {
+    "version": "V2_Optimized",
+    "total": 60,
+    "timestamp": "2026-06-16 22:27:20",
+    "judge_models": [
+      "gemini-2.5-flash",
+      "gemini-2.5-flash-lite"
+    ],
+    "mode": "ONLINE"
+  },
+  "metrics": {
+    "avg_score": 4.6583,
+    "pass_rate": 0.95,
+    "hit_rate": 0.9821,
+    "mrr": 0.9732,
+    "avg_faithfulness": 0.9783,
+    "avg_relevancy": 1.0,
+    "agreement_rate": 0.9833,
+    "cohens_kappa": 0.6021,
+    "num_conflicts": 3,
+    "position_bias_rate": 0.167,
+    "avg_latency_sec": 1.576,
+    "wall_time_sec": 54.92,
+    "total_cost_usd": 0.055266,
+    "cost_per_eval_usd": 0.000921
+  },
+  "cost_breakdown": {
+    "total_calls": 247,
+    "total_prompt_tokens": 100159,
+    "total_completion_tokens": 15403,
+    "total_tokens": 115562,
+    "total_cost_usd": 0.055266,
+    "per_model": {
+      "gemini-2.5-flash": {
+        "calls": 184,
+        "prompt_tokens": 77321,
+        "completion_tokens": 11250,
+        "cost_usd": 0.051321
+      },
+      "gemini-2.5-flash-lite": {
+        "calls": 63,
+        "prompt_tokens": 22838,
+        "completion_tokens": 4153,
+        "cost_usd": 0.003945
+      }
+    }
+  },
+  "regression": {
+    "v1": {
+      "avg_score": 4.4407,
+      "pass_rate": 0.8983,
+      "hit_rate": 0.9818,
+      "mrr": 0.9818,
+      "avg_faithfulness": 0.9898,
+      "avg_relevancy": 1.0,
+      "agreement_rate": 1.0,
+      "cohens_kappa": 0.4126,
+      "avg_latency_sec": 2.675,
+      "wall_time_sec": 72.33,
+      "total_cost_usd": 0.051501,
+      "cost_per_eval_usd": 0.000873
+    },
+    "v2": {
+      "avg_score": 4.6583,
+      "pass_rate": 0.95,
+      "hit_rate": 0.9821,
+      "mrr": 0.9732,
+      "avg_faithfulness": 0.9783,
+      "avg_relevancy": 1.0,
+      "agreement_rate": 0.9833,
+      "cohens_kappa": 0.6021,
+      "avg_latency_sec": 1.576,
+      "wall_time_sec": 54.92,
+      "total_cost_usd": 0.055266,
+      "cost_per_eval_usd": 0.000921
+    },
+    "gate": {
+      "decision": "APPROVE",
+      "delta": {
+        "avg_score": 0.2176,
+        "hit_rate": 0.0003,
+        "faithfulness": -0.0115,
+        "cost_ratio": 1.073
+      },
+      "checks": [
+        {
+          "criterion": "quality_no_regression",
+          "passed": true,
+          "detail": "Δavg_score = +0.2176"
+        },
+        {
+          "criterion": "faithfulness_no_regression",
+          "passed": true,
+          "detail": "Δfaithfulness = -0.0115"
+        },
+        {
+          "criterion": "retrieval_no_regression",
+          "passed": true,
+          "detail": "Δhit_rate = +0.0003"
+        },
+        {
+          "criterion": "judge_reliability",
+          "passed": true,
+          "detail": "Cohen's Kappa = 0.6021"
+        },
+        {
+          "criterion": "cost_budget",
+          "passed": true,
+          "detail": "cost_ratio = 1.07x"
+        },
+        {
+          "criterion": "performance_budget",
+          "passed": true,
+          "detail": "54.92s <= 144s"
+        }
+      ]
+    }
+  },
+  "position_bias_audit": {
+    "sampled": 6,
+    "biased_count": 1,
+    "position_bias_rate": 0.167,
+    "details": [
+      {
+        "position_bias": false,
+        "consistent": true,
+        "order1_pick": "answer_a",
+        "order2_pick": "answer_a"
+      },
+      {
+        "position_bias": false,
+        "consistent": true,
+        "order1_pick": "answer_a",
+        "order2_pick": "answer_a"
+      },
+      {
+        "position_bias": false,
+        "consistent": true,
+        "order1_pick": "answer_b",
+        "order2_pick": "answer_b"
+      },
+      {
+        "position_bias": false,
+        "consistent": true,
+        "order1_pick": "tie",
+        "order2_pick": "tie"
+      },
+      {
+        "position_bias": false,
+        "consistent": true,
+        "order1_pick": "answer_a",
+        "order2_pick": "answer_a"
+      },
+      {
+        "position_bias": true,
+        "consistent": false,
+        "order1_pick": "answer_a",
+        "order2_pick": "answer_b"
+      }
+    ]
+  }
+}

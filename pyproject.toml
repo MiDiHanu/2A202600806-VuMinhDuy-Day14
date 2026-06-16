@@ -1,0 +1,14 @@
+[project]
+name = "lab14-ai-evaluation-benchmarking"
+version = "0.1.0"
+description = "Lab 14 - AI Evaluation Factory (Expert): Gemini-based multi-judge benchmark"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "jinja2>=3.1.0",
+    "openai>=1.10.0",
+    "pandas>=2.1.0",
+    "pypdf>=4.0.0",
+    "python-dotenv>=1.0.0",
+    "tqdm>=4.66.0",
+]
